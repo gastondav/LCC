@@ -1,0 +1,24 @@
+6)
+
+a- Tengo hilos queriendo acceder a memoria compartida, con lo cual tengo race condition y hay un problemas
+
+b- Son necesarias las barreras de memoria porque puedo tener reordenamiento
+
+c- No hay problema pq como tengo un unico procesador y estoy en x86, entonces asm es atomica
+
+d- Si tengo mas de un procesador tengo varias caches con lo cual puedo tener cambio de contexto y asm
+   no hace atomica
+
+e- Esta version implementa un lock, con lo cual funciona bien
+
+7)
+
+Cuando compilo como optimizadores el compilador al no cambiar el valor de visitantes en main, puede 
+directamente imprimir el valor inicial de visitantes que es 0.
+
+Otra opcion es que por ejemplo:
+
+En el hilo 1 suma a visitante 1 con lo cual visitante = 1
+
+En el hilo 2 ve el valor de visitante, pero como no cambia toma visitante = 0 y le suma 1, con
+lo cual pierdo la suma del hilo 1
