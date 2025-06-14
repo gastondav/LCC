@@ -1,0 +1,11 @@
+9)
+
+a- race condition, no hay exclusion mutua
+
+b- funciona bien, pero tengo busy waiting
+
+c- si es incl con lock funciona bien
+
+d- funciona bien con lock
+
+e- funciona bien pero no aprovecho los multiprocesadores

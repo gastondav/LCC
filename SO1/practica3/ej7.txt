@@ -1,0 +1,26 @@
+7)
+
+No es necesario mutex por vaarias razones:
+
+La unica zona critica del programa es el buffer ya que los dos thread acceden a el. Los indices no son 
+zona critica ya que son distintos para cada thread.
+
+Luego supongamos que el buffer es:
+
+| 1 | 2 | 3 | 4 | ... |  |
+0x1  0x2               0x100
+
+Si 2 threads escriben en el buffer uno en la posicion 100 y otro en la 1 no va a haber condicion de 
+carrera ya que acceden a lugares de memoria distintos, el problema se da cuando acceden a la misma
+direccion de memoria. A su vez como declaramos los indices y el buffer como VOLATILE INT el programa 
+va a saber que estos pueden cambiar.
+
+Luego, sabemos que los indices nunca son iguales (y con lo cual no acceden a la misma posicion de memoria
+y no hay condicion de carrera) ya que en el codigo tenemos las lineas:
+
+while(diff() == 0);
+
+while(diff() == B);
+
+que hace que el programa no haga nada (con lo cual no manipulamos el buffer) cuando los indices
+coincide.

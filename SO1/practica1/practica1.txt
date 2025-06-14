@@ -1,0 +1,98 @@
+PRACTICA 1
+
+1) 
+
+echo $$ -> devuelve el pid del proceso actual
+
+env -> corre el programa en un entorno modificado
+
+ps -> captura de los procesos corriendo
+
+tree -> ver todos los archivos
+
+strace -> ver las llamadas a sistema de un proceso o comando
+
+2)
+
+a- Lo que pasa es que no hay ninguna salida por terminal
+
+b- Lo que pasa es que no se puede leer nada del mismo
+
+c- Ambos FD apuntan a los mismo, al cerrar una copia sigo teniendo un FD que apunta a algo
+
+d- Al hacer fork getpid va a ser distinto si estamos en el padro o hijo, generalmente el del hijo es el getpid
+   del padre mas 1.
+   En exec el pid de ambos procesos es el mismo.
+
+e- El hijo aparece como zombie en la tabla de procesos, sigue exitiendo pq el padre no lo espero con wait,
+   este se queda en ese estado hasta que el padre termine
+
+f- Al hacer un malloc de un 1 GB, no aumenta el uso de memoria de un proceso porque esta como memoria virtual
+   empieza a ocupar memoria fisica a medida que va usando esta memoria virtual
+
+g- Al llamar a fork(), el proceso hijo obtiene una copia exacta del espacio de direcciones del padre. 
+   Esto incluye las variables, el heap, el stack, etc. Aunque el proceso hijo obtiene una copia del 
+   espacio de direcciones del padre, no se hace una copia física de la memoria en RAM inmediatamente. 
+   En lugar de eso, el sistema operativo utiliza una técnica llamada Copy-On-Write (COW). 
+   Esto significa que las páginas de memoria no se duplican inmediatamente; en su lugar, tanto el padre 
+   como el hijo comparten las mismas páginas de memoria, y solo cuando uno de los procesos (padre o hijo) 
+   intenta modificar una página, el sistema operativo hace una copia de esa página para ese proceso específico.
+
+   Cuando un proceso llama a exec(), el sistema operativo reemplaza completamente el contenido de la memoria 
+   del proceso (tanto la memoria virtual como la memoria física) con la nueva imagen del programa.
+
+h- Al llamar a fork() los file descriptors se copian en el proceso hijo, lo que significa que el hijo 
+   recibe los mismos file descriptors que el proceso padre. Estos file descriptors apuntan a los mismos 
+   archivos, sockets, pipes, etc., que el proceso padre.
+
+   Al llamar a exec() No se cierran automáticamente: Por defecto, los file descriptors que estaban abiertos
+   en el proceso original (antes de la llamada a exec()) permanecen abiertos en el proceso reemplazado.
+
+i- El comando cd modifica el directorio de trabajo del proceso que lo ejecuta, es decir, cambia el directorio 
+   actual del proceso de la shell.Cuando se ejecuta cd dentro de la shell, el cambio de directorio solo afecta 
+   al proceso actual (la shell). Si lo implementas como un programa independiente, el cambio de directorio solo
+    afectaría al proceso que ejecuta ese programa, pero no afectaría al proceso padre, que es la shell.
+
+   El comando ls no afecta el entorno de la shell, simplemente lista los contenidos de un directorio. 
+   Puede ser un programa ejecutable porque solo necesita leer información de un directorio y mostrarla.
+   
+3) 
+
+#include <stdio.h>
+
+int main() {
+    while (1) {          // Bucle infinito
+        printf("y\n");   // Imprime "y" seguido de una nueva línea
+    }
+    return 0;
+}
+
+El proceso yes se ejecuta indefinidamente sin interrupciones o esperas por lo que consume 
+muchos recursos de la CPU, ya que el comando esta continuamente solicitando recursos al procesador
+
+4) Cuando el proceso termina se libera toda la memoria del mismo, con lo cual aunque no haya un free() 
+   se libera la memoria previamente reservada, pero si mientras el programa esta en proceso y se reserva mucha 
+   memoria y se utiliza y no se va liberando eso puede generar problemas.
+
+5) free() no es una llamada a sistema porque es una funcion de una libreria de c.
+   La principal tarea de free() es marcar la memoria como disponible para que el administrador 
+   de memoria de la biblioteca estándar (como el allocador de memoria) pueda reutilizarla más tarde. 
+   Este proceso de liberación no involucra directamente al sistema operativo ni realiza llamadas al sistema.
+
+6) getchar() forma parte de la biblioteca estándar de C, y lo que hace es leer un carácter desde 
+   el flujo de entrada estándar (stdin). Lo que realmente hace es invocar internamente otras funciones 
+   que interactúan con el sistema operativo, como read() o fgetc() para manejar archivos.
+
+   int ungetc(int c, FILE *stream);
+
+   ungetc() es otra función de la biblioteca estándar de C que permite poner un carácter de vuelta
+   en el flujo de entrada. Esto significa que puedes "devolver" un carácter que previamente ha sido leído.
+   ungetc() no coloca el carácter directamente en la entrada estándar, sino que lo coloca en un búfer 
+   interno de la biblioteca estándar. Luego, lo devuelve.
+
+8) Lo que pasa al correr el programa es que imprime infinitamente ouch!
+   Esto se debe a que cuando se hace la division por cero el valor de denom = 0 esta guardado en un registro
+   pero al cambiar este valor en el handler la compu hace optimizaciones que hacen que al cambiar este valor
+   se cambie el valor de denom en memoria, pero el registro para hacer la operacion r = 1 / denom y 
+   que tiene el valor de denom no es modificado, con lo cual la operacion vuelve a hacerse con el valor de 
+   denom = 0 

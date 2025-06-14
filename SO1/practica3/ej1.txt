@@ -1,0 +1,10 @@
+1)
+
+No esta bien pq en semantica de Hoare puede fallar
+
+semantica de Hoare:                     semantica de Mesa:
+
+    if(cond)                                while(cond)
+        wait(cond, bck)                         wait(cond, bck)
+
+        

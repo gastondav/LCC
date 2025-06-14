@@ -1,0 +1,77 @@
+a)
+
+not b = case b of
+    True -> False
+    False -> True
+
+error en la identacion
+
+b)
+
+in [x]         =  []
+in (x:xs)      =  x : in xs
+in []          =  error "empty list"
+
+error es que in es una palabra reservada
+la funcion saca el ultimo elemento de la lista
+
+c)
+
+Length []        =  0
+Length (_:l)     =  1 + Length l
+
+podria ser 
+
+length2 []        =  0
+length2 (_:l)     =  1 + Length 2
+
+el problema es que las mayusculas no se usan para funciones sino para contructores de valores, etc
+
+d) 
+
+list123 = (1 : 2) : 3 : []
+
+el error son los parentesis 
+
+e)
+
+[]     ++! ys = ys
+(x:xs) ++! ys = x : xs ++! ys
+
+no hay error pero esta funcion concatena, lo cual ya hace ++
+
+f)
+
+addToTail x xs = map +x tail xs
+
+correcta:
+
+addToTail x xs = map (+x) tail xs
+
+(+x) es una funcion que le suma + x a un num
+
+g)
+
+listmin = head . sort xs
+
+correcta
+
+listmin xs = head (sort xs)
+
+listmin xs = (head . sort) xs
+
+listmin = head . sort
+
+las tres son equivalentes ademas f x = g x entonces f = g como en matematica 
+
+h)
+
+smap f [] = []
+smap f [x] = [f x]
+smap f (x:xs) = f x : smap (smap f) xs
+
+correcta:
+
+smap f [] = []
+smap f [x] = [f x]
+smap f (x:xs) = f x : smap f xs

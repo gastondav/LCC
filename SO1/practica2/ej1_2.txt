@@ -1,0 +1,9 @@
+
+1)
+
+La diferencia entre los dos codigos es que en el primer caso solo cambia el valor de encontrado
+en cuando A[i] == 42, mientras que el segundo codigo todo el tiempo va cambiando el valor de encontrado
+
+2)
+
+Heap y Variables Globales
