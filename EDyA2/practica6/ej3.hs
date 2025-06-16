@@ -1,15 +1,28 @@
 data Tree a = E |Leaf a| Join (Tree a) (Tree a) deriving (Show, Eq)
 
+(|||):: a->b -> (a,b)
+x|||y = (x,y)
+
 sufijos:: Tree Int -> Tree(Tree Int)
 sufijos E = E 
 sufijos t = snd(sufijos' t E)
 
-sufijos' :: Tree Int -> Tree Int -> (Tree Int,Tree(Tree Int))  
-sufijos' (Leaf x) acum = (Leaf x, Leaf acum)
-sufijos' (Join l r) acum = let 
-                                (sec, acum2) = sufijos' r acum 
+sufijos1' :: Tree Int -> Tree Int -> (Tree Int,Tree(Tree Int))  
+sufijos1' (Leaf x) acum = (Leaf x, Leaf acum)
+sufijos1' (Join l r) acum = let 
+                                (sec, acum2) = sufijos1' r acum 
                                 sec_2 = if (acum == E) then sec else (Join sec acum)
-                            in (sec_2 , (Join (snd(sufijos' l sec_2)) acum2))    
+                            in (sec_2 , (Join (snd(sufijos1' l sec_2)) acum2))    
+
+--Otra solucion
+sufijos' :: Tree Int -> Tree Int -> (Tree Int,Tree(Tree Int))  
+sufijos' (Leaf x) acum = if acum == E then (Leaf x, Leaf acum)
+                                      else (Join (Leaf x) acum, Leaf acum)
+sufijos' (Join l r) acum = let 
+                                (sec_der, acum_der) = sufijos' r acum 
+                                (sec_izq, acum_izq) = sufijos' l sec_der
+                            in ((Join sec_izq sec_der) , (Join acum_izq acum_der))    
+
 
 --entrada: 
 --Join (Join (Leaf 10) (Leaf 15)) (Leaf 20)
@@ -50,7 +63,8 @@ conSufijos' (Join l r) acum = let
 mapReduce :: (a -> b) -> (b -> b -> b) -> b -> Tree a -> b
 mapReduce _ _ e E            = e
 mapReduce f _ _ (Leaf x)     = f x
-mapReduce f comb e (Join l r) = comb (mapReduce f comb e l) (mapReduce f comb e r)
+mapReduce f comb e (Join l r) = let (l', r') = mapReduce f comb e l ||| mapReduce f comb e r 
+                                in comb l' r'
 
 e2 = 0
 
@@ -69,4 +83,7 @@ mejorGanancia :: Tree Int -> Int
 mejorGanancia t = maxAll ( mapT (ganancias) (conSufijos t)) 
                     where ganancias (i,t2) = Leaf (mapReduce (-i+) max e2 t2) 
 
-
+mapT :: (a -> b) -> Tree a -> Tree b
+mapT f E          = E
+mapT f (Leaf a)   = (Leaf (f a))
+mapT f (Join l r) = let (l', r') = mapT f l ||| mapT f r in (Join l' r')

@@ -25,7 +25,7 @@ cons a (Node n l x r) = (Node (n+1) (cons a l) x r)
 -- tabulate sin paralelizar
 tabulate_s :: (Int -> a) -> Int -> BTree a
 tabulate_s f 0 = Empty
-tabulate_s f n = (Node n (tabulate_s f n') (f n') Empty) where n' = n-1
+tabulate_s f n = (Node n (tabulate_s f n')(f n') Empty) where n' = n-1
 
 -- tabulate paralelizado
 tabulate :: (Int -> a) -> Int -> BTree a
@@ -34,7 +34,7 @@ tabulate f n = tab_aux f 0 n
 
 tab_aux :: (Int -> a) -> Int -> Int -> BTree a
 tab_aux f i j | i > j = Empty
-              | otherwise = let (l', r') = tab_aux f i (m-1) ||| tab_aux f (m + 1) j 
+              | oth erwise = let (l', r') = tab_aux f i (m-1) ||| tab_aux f (m + 1) j 
               in Node cant l' (f m) r'
               where 
                 m = (i + j) `div` 2
@@ -55,7 +55,6 @@ takeT_aux x (Node n l v r ) | (x > ind) = (Node x l v (takeT_aux (x-ind) r) )
                             | (x == ind) = (Node ind l v Empty) 
                             where ind = size(l)+1
 
-
 dropT :: Int -> BTree a-> BTree a
 dropT x Empty = Empty
 dropT x (Node n l v r ) = if (x >= n) then Empty else (dropT_aux x (Node n l v r ))
@@ -64,5 +63,6 @@ dropT_aux x Empty = Empty
 dropT_aux x (Node n l v r ) | (x > ind) =  (dropT_aux (x-ind) r)
                             | (x < ind) = (Node x (dropT_aux x l) v r )
                             | (x == ind) = r
-                            where ind = size(l)+1
+                            where ind = size(l) + 1
 
+ 
