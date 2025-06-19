@@ -34,7 +34,7 @@ tabulate f n = tab_aux f 0 n
 
 tab_aux :: (Int -> a) -> Int -> Int -> BTree a
 tab_aux f i j | i > j = Empty
-              | oth erwise = let (l', r') = tab_aux f i (m-1) ||| tab_aux f (m + 1) j 
+              | otherwise = let (l', r') = tab_aux f i (m-1) ||| tab_aux f (m + 1) j 
               in Node cant l' (f m) r'
               where 
                 m = (i + j) `div` 2
