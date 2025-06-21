@@ -6,10 +6,10 @@ data Paren = Open | Close deriving (Eq, Show)
 
 -- a)
 
-matchParen:: Seq s => s Paren -> Bool 
-matchParen s = (matchP s == (0, 0))
+{- matchParen:: Seq s => s Paren -> Bool 
+matchParen s = (matchP s == (0, 0)) -}
 
-comb:: (Int, Int) -> (Int, Int) -> (Int, Int)
+comb :: (Int, Int) -> (Int, Int) -> (Int, Int)
 comb (i,k) (i',k')| (k >= i') = (i, k- i' + k')
                   | otherwise = (i + i'- k, k')
 
@@ -23,3 +23,8 @@ matchP s = case showtS s of
 
 -- b) 
 
+matchParen:: Seq s => s Paren -> Bool 
+matchParen s = (reduceS comb (0, 0) (mapS f s)) == (0, 0)
+               where  
+                  f x = if x == Open then (0, 1)
+                                     else (1, 0)
