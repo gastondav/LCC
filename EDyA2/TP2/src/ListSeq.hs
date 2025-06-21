@@ -24,8 +24,19 @@ instance Seq [] where
                         tabulateS_aux f i n | n == i    = []
                                             | otherwise = f i : (tabulateS_aux f (i+1) n) 
 
-    --mapS       = ...
-    --filterS    = ...
+    mapS :: (a -> b) -> [a] -> [b]
+    mapS f []     = []
+    mapS f (x:xs) = (f x) : (mapS f xs)
+    {- Que conviene mas (por el append que es ineficiente)
+        mapS f xs = case showtS xs of 
+        EMPTY    -> []
+        ELT x    -> [f x]
+        NODE l r -> let (l', r') = mapS f l ||| mapS f r in appendS l' r' -}
+
+    filterS :: (a -> Bool) -> [a] -> [a]
+    filterS f []     = []
+    filterS f (x:xs) | (f x) == True = x : (filterS f xs)
+                     | otherwise = (filterS f xs)
     
     appendS :: [a] -> [a] -> [a]
     appendS xs ys = xs ++ ys
@@ -44,12 +55,45 @@ instance Seq [] where
     showtS []     = EMPTY
     showtS [x]    = ELT x
     showtS xs     = let m = div (length xs) 2
-                        izq = takeS m xs
-                        der = drop 
+                        (izq, der) = takeS xs m ||| dropS xs m
+                        in NODE izq der
 
-    --showlS     = ...
+    showlS :: [a] -> ListView a [a]
+    showlS []     = NIL
+    showlS (x:xs) = CONS x xs
+
+    joinS :: [[a]] -> [a]
+    joinS xs = foldr (++) [] xs
     
-    --joinS      = ...
-    --reduceS    = ...
-    --scanS      = ...
-    --fromList   = ...
+    reduceS :: (a -> a -> a) -> a -> [a] -> a
+    reduceS comb e xs = reduceT comb e (toTree xs)
+        where
+            toTree :: [a] -> TreeView a [a] 
+            toTree xs = case length xs of 
+                        1 -> ELT (head xs)
+                        n -> let k = 2 ^ (floor (logBase 2 (fromIntegral (n-1)))) 
+                            in NODE (takeS xs k) (dropS xs k)
+            reduceT :: (a -> a -> a) -> a -> TreeView a [a] -> a
+            reduceT comb e EMPTY      = e
+            reduceT comb e (ELT x)    = x
+            reduceT comb e (NODE l r) = let (l', r') = (reduceT comb e (toTree l)) ||| 
+                                                       (reduceT comb e (toTree r)) 
+                                    in comb l' r'
+           
+    scanS :: (a -> a -> a) -> a -> [a] -> ([a], a)
+    scanS comb e [] = ([e], e)
+    scanS comb e xs = let resul  = scanS_aux comb e xs
+                          resul' = e : resul
+                          (resto, ultimo) = dividir resul'
+                      in (resto, ultimo)
+        where 
+            scanS_aux :: (a -> a -> a) -> a -> [a] -> [a]
+            scanS_aux comb acum [x] = [comb acum x]
+            scanS_aux comb acum (x:xs) = let acum' = (comb acum x) in acum' : (scanS_aux comb acum' xs)
+            dividir :: [a] -> ([a], a)
+            dividir [x]      = ([], x)
+            dividir (x : xs) = let (resto, ultimo) = dividir xs in (x : resto , ultimo)
+
+    fromList :: [a] -> [a]
+    fromList xs = xs
+
