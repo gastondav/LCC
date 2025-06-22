@@ -77,6 +77,8 @@ sccml2 s = let s' = mapS (\a -> (a, a)) (index s)      -- intervalos unitarios
 
 -- a) ejemplos
 
+--para entender el codigo del item a lo recomendable es ir debugeando paso a paso un ejemplo
+
 -- [5,6,2,3,5,1,9]
 -- (1,5,1,5,1,1) (1,6,1,6,1,1) (1,2,1,2,1,1)                    [5,6,2]
 -- (1,3,1,3,1,1) (1,5,1,5,1,1) (1,1,1,1,1,1) (1,9,1,9,1,1)      [3,5,1,9]
