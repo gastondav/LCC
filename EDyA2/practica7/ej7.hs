@@ -2,38 +2,42 @@ import ListSeq ()
 import Seq
 import Par
 
-{- data Treeview a = Empty | Leaf a | Node [a] [a] deriving Show
- -}
-{- showt::[a]-> Treeview a
-showt [] = Empty
-showt [x] = Leaf x
-showt xs =let miti = (div (length xs) 2) in Node (take miti xs) (drop miti xs)   
- -}
 greater :: (a -> a -> Ordering) -> a -> a -> Bool
 greater f x y = (f x y == GT)
-{- 
-merge ::(a->a->Ordering) -> [a]-> [a] -> [a]
-merge f  xs ys = case showt xs of
-                Empty -> ys
-                Leaf x -> let (g,l) = ((filter (greater f x) ys) ||| (filter (\a -> not (greater f x a)) ys)) 
-                            in ((l ++ [x]) ++ g)
-                Node l r -> let lft = merge f l ys 
-                            in merge f r lft 
- -}
 
 merge :: Seq s => (a -> a -> Ordering) -> s a -> s a -> s a
 merge f xs ys = case showlS xs of 
                 NIL -> ys
                 CONS x xs' -> case showlS ys of  
-                             NIL -> appendS (singletonS x) xs
+                             NIL -> xs
                              CONS y ys' -> if greater f x y
                                           then appendS (singletonS y) (merge f xs ys')
                                           else appendS (singletonS x) (merge f xs' ys)
 
-{- comb :: (a -> a -> Ordering) -> a -> Seq a
-comb f a xs = case showtS xs of 
-             EMPTY -> a
-             ELT x -> if (f x a == True) 
-                      then appendS (singletonS a) (singletonS xs)
-                      else appendS (singletonS xs) (singletonS a)
-             NODE l r ->  -}
+sort :: Seq s => (a -> a -> Ordering) -> s a -> s a
+sort f s = case showtS s of 
+            EMPTY -> emptyS
+            ELT x -> singletonS x
+            NODE l r -> let (l', r') = sort f l ||| sort f r
+                in merge f l' r'
+
+maxE :: Seq s => (a -> a -> Ordering) -> s a -> a
+maxE f s = reduceS mayor (nthS s 0) (dropS s 1)
+            where 
+                mayor a b = if (greater f a b) == True
+                            then a
+                            else b
+
+maxS :: Seq s => (a -> a -> Ordering) -> s a -> Int
+maxS f s = (\(a, b) -> b) (reduceS mayor (nthS s' 0) (dropS s' 1))
+            where 
+                mayor (a, b) (c, d) = if (greater f a c) == True
+                                        then (a, b)
+                                        else (c, d)
+                s' = index s
+
+index :: Seq s => s a -> s (a, Int)
+index s = tabulateS f (lengthS s)
+          where 
+            f i = (nthS s i, i)
+

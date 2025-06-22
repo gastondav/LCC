@@ -1,3 +1,4 @@
+{-# LANGUAGE InstanceSigs #-}
 module ListSeq where
 import Seq
 import Par
