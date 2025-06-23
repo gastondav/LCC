@@ -75,6 +75,14 @@ sccml2 s = let s' = mapS (\a -> (a, a)) (index s)      -- intervalos unitarios
                s''''    = mapS (\((_, i),(_, j)) -> j - i) s''' --largos de los intervalos
             in reduceS max 0 s''''
 
+--(p, u, l, ls)
+--p: primer valor
+--u: ultimo valor
+--l:
+--ls:
+
+comb_profe :: 
+
 -- a) ejemplos
 
 --para entender el codigo del item a lo recomendable es ir debugeando paso a paso un ejemplo
