@@ -123,3 +123,15 @@ red (k, s) = let (cant, maximo) = reduceS comb_red (0,0) s
 
 
 --EJERCICIO 9
+
+countCaract :: Seq s => s (s Char) -> s (Char, Int)
+countCaract s = let pairs = joinS (mapS apv' s)
+                    groups = collect pairs
+                in mapS red' groups
+
+apv' :: Seq s => s Char -> s (Char, Int) 
+apv' texto = mapS (\c -> (c, 1)) texto
+
+red' :: Seq s => (Char, s Int) -> (Char, Int)
+red' (letra, s) = (letra, reduceS (+) 0 s)
+
