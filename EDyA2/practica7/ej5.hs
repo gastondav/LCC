@@ -78,10 +78,26 @@ sccml2 s = let s' = mapS (\a -> (a, a)) (index s)      -- intervalos unitarios
 --(p, u, l, ls)
 --p: primer valor
 --u: ultimo valor
---l:
---ls:
+--l:largo sufijo
+--ls: largo secuencia
 
-comb_profe :: 
+comb_profe :: (Int, Int, Int, Int) -> (Int, Int, Int, Int) -> (Int, Int, Int, Int)
+comb_profe (p1, u1, l1, ls1) (p2, u2, l2, ls2) = if (ls2 == l2) && (u1 < p2)
+                                                 then (p1, u2, ls1 + ls2, ls1 + ls2) 
+                                                 else (p1, u2, ls2, ls1 + ls2)
+
+sccml_profe :: Seq s => s Int -> Int 
+sccml_profe s = if (lengthS s) == 0 
+                then 0
+                else let s' = mapS (\x -> (x, x, 1, 1)) s
+                         (rs, r) = scanS comb_profe (nthS s' 0) (dropS s' 1)
+                     in (\(a, b, c, d) -> d) (reduceS max' r rs)
+                        where
+                          max' (a, b, c, d) (a', b', c', d') = if d > d' 
+                                                             then (a, b, c, d)
+                                                             else (a', b', c', d')
+
+
 
 -- a) ejemplos
 

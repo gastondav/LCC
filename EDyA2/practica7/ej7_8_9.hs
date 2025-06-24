@@ -92,3 +92,34 @@ collect s = sort f (collect_aux s)
                 f (a, b) (c, d) = if a > c 
                                     then GT
                                     else LT
+
+-- EJERCICIO 8
+
+datosIngreso :: Seq s => s (String, s Int) -> s (Int, Int)
+datosIngreso s = let pairs = mapS apv s
+                     groups = collect pairs
+                     in mapS red groups 
+
+apv :: Seq s => (String, s Int) -> (Int, (Int, Int))
+apv (name, s) = let largo = lengthS s
+                    suma = reduceS (+) 0 s
+                    prom = div suma largo
+                    in (categoria prom, (1, prom))
+                        where
+                            categoria n | n >= 70 = 0
+                                        | n > 50 = 1
+                                        | otherwise = 2 
+
+red :: Seq s => (Int, s (Int, Int)) -> (Int, Int)
+red (k, s) = let (cant, maximo) = reduceS comb_red (0,0) s
+             in (cant, maximo)
+                where 
+                    comb_red (n, prom) (n', prom') = (n + n', max prom prom')
+
+--ENTRADA:
+--[("Ana", [90, 80]), ("Beto", [60, 70]), ("Clara", [40, 50]), ("David", [85, 95]), ("Eva", [55, 50])]
+--SALIDA: 
+--[(2,90),(2,65),(1,45)]
+
+
+--EJERCICIO 9
