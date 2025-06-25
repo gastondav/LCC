@@ -38,17 +38,48 @@ filterS f s = let
                                             then x : filter f xs
                                             else filter f xs
 
+
 appendS :: A.Arr a -> A.Arr a -> A.Arr a
 appendS s1 s2 = A.tabulate f (n + m)
                     where 
-                        n = len
+                        n = lengthS s1
+                        m = lengthS s2
+                        f i = if i > n - 1
+                                then nthS s2 (i - n)
+                                else nthS s1 i
+
+
+takeS :: A.Arr a -> Int -> A.Arr a
+takeS s i = A.subArray 0 i s
+
+
+dropS :: A.Arr a -> Int -> A.Arr  a
+dropS s i = A.subArray i ((lengthS s) - i) s
+
+
+showtS :: A.Arr a -> A.TreeView a (A.Arr a)
+showtS s | lengthS s == 0 = A.EMPTY
+         | lengthS s == 1 = A.ELT (nthS s 0)
+         | otherwise = let 
+                        m = div (lengthS s) 2
+                        l = takeS s m
+                        r = dropS s m
+                        in A.NODE l r
+
+
+showlS :: A.Arr a -> A.ListView a (A.Arr a)
+showlS s | lengthS s == 0 = A.NIL
+         | otherwise = A.CONS (nthS s 0) (dropS s 1) 
+
+
+joinS :: A.Arr (A.Arr a) -> A.Arr a
+joinS s = A.flatten s
+
+
+fromListS :: [a] -> A.Arr a 
+fromListS s = A.fromList s
 
 {- 
-   takeS      :: s a -> Int -> s a
-   dropS      :: s a -> Int -> s a
-   showtS     :: s a -> TreeView a (s a)
-   showlS     :: s a -> ListView a (s a)
-   joinS      :: s (s a) -> s a
    reduceS    :: (a -> a -> a) -> a -> s a -> a
    scanS      :: (a -> a -> a) -> a -> s a -> (s a, a)
-   fromList   :: [a] -> s a -}
+-}

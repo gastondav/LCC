@@ -9,7 +9,7 @@
  
 -}
 
-module Arr (Arr, length, tabulate, (!), subArray, fromList, flatten, empty) where
+module Arr (Arr, length, tabulate, (!), subArray, fromList, flatten, empty, TreeView(..), ListView(..)) where
 
 import Prelude hiding (length)
 import qualified Data.Vector as V
@@ -49,3 +49,6 @@ instance Show a => Show (Arr a) where
                               
 instance Eq a => Eq (Arr a) where
          s == p = length s == length p && and [s ! i == p ! i | i <- [0..length s - 1]]
+
+data TreeView a t = EMPTY | ELT a | NODE t t deriving Show
+data ListView a t = NIL | CONS a t  deriving Show
