@@ -17,7 +17,6 @@ import Control.Monad
 
 newtype Arr a = A {getVector ::  V.Vector a }
 
-
 length    :: Arr a -> Int
 length (A p)  = V.length p
 
