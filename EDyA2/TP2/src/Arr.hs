@@ -51,4 +51,5 @@ instance Eq a => Eq (Arr a) where
          s == p = length s == length p && and [s ! i == p ! i | i <- [0..length s - 1]]
 
 data TreeView a t = EMPTY | ELT a | NODE t t deriving Show
+
 data ListView a t = NIL | CONS a t  deriving Show
